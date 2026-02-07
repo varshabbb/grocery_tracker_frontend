@@ -1,37 +1,28 @@
 import { useState } from "react";
+import { addItem } from "./services/GroceryService"; // 🔥 IMPORTANT
 
 export default function GroceryTracker() {
-  // Minor change: added basic validation
   const [itemName, setItemName] = useState("");
   const [quantity, setQuantity] = useState("");
   const [error, setError] = useState("");
 
-  const addItem = () => {
+  const handleAdd = () => {
     if (itemName.trim() === "" || quantity === "") {
       setError("Please enter item name and quantity");
       return;
     }
 
-    fetch("http://localhost:8080/api/groceries", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        itemName: itemName,
-        quantity: Number(quantity),
-        purchased: false
-      })
+    addItem({
+      itemName,
+      quantity: Number(quantity),
+      purchased: false
     })
-      .then(res => res.json())
-      .then(data => {
-        console.log(data);
+      .then(() => {
         setItemName("");
         setQuantity("");
         setError("");
       })
-      .catch(err => {
-        console.error(err);
+      .catch(() => {
         setError("Failed to add item");
       });
   };
@@ -55,7 +46,7 @@ export default function GroceryTracker() {
         onChange={e => setQuantity(e.target.value)}
       />
 
-      <button onClick={addItem}>Add</button>
+      <button onClick={handleAdd}>Add</button>
     </div>
   );
 }
